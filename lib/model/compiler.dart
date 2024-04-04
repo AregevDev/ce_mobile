@@ -32,7 +32,6 @@ class Compiler {
   }
 
   static Future<List<Compiler>> fetchCompilers() async {
-
     final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
 
     if (response.statusCode == HttpStatus.ok) {
@@ -40,6 +39,17 @@ class Compiler {
       return List<Compiler>.from(it.map((e) => Compiler.fromJson(e)));
     } else {
       throw Exception('Failed to fetch compilers: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<Compiler>> fetchCompilersForLanguage(String langName) async {
+    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint/$langName"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
+
+    if (response.statusCode == HttpStatus.ok) {
+      Iterable it = jsonDecode(response.body);
+      return List<Compiler>.from(it.map((e) => Compiler.fromJson(e)));
+    } else {
+      throw Exception('Failed to fetch compilers for $langName: ${response.statusCode}');
     }
   }
 }

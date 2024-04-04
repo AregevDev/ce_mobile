@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    compilers = Compiler.fetchCompilers();
+    compilers = Compiler.fetchCompilersForLanguage("llvm");
   }
 
   void _incrementCounter() {
@@ -127,9 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 future: compilers,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Text(snapshot.data!.first.name);
+                    return Text(snapshot.data!.last.name);
                   } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
+                    return Text('${snapshot.error}\n${snapshot.stackTrace}');
                   }
                   return const CircularProgressIndicator();
                 })
