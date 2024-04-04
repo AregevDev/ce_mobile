@@ -1,5 +1,5 @@
 // Default URL
-const String DEFAULT_CE_URL = "https://godbolt.org";
+const String defaultUrl = "https://godbolt.org";
 
 // Endpoints
-const String COMPILERS_ENDPOINT = "/api/compilers";
+const String compilersEndpoint = "/api/compilers";

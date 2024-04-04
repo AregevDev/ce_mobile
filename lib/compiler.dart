@@ -33,7 +33,7 @@ class Compiler {
 
   static Future<List<Compiler>> fetchCompilers() async {
 
-    final response = await http.get(Uri.parse("$DEFAULT_CE_URL$COMPILERS_ENDPOINT"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
+    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
 
     if (response.statusCode == HttpStatus.ok) {
       Iterable it = jsonDecode(response.body);
