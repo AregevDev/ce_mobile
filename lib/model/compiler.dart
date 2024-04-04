@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'consts.dart';
+import '../consts.dart';
 import 'package:http/http.dart' as http;
 
 class Compiler {
