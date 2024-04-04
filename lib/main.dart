@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'compiler.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -28,7 +30,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepOrange, brightness: Brightness.dark),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -56,6 +60,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  late Future<List<Compiler>> compilers;
+
+  @override
+  void initState() {
+    super.initState();
+    compilers = Compiler.fetchCompilers();
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -112,6 +123,16 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            FutureBuilder(
+                future: compilers,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data!.first.name);
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  return const CircularProgressIndicator();
+                })
           ],
         ),
       ),
