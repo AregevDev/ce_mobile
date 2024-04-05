@@ -1,9 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
+
+import 'package:dart_json_mapper/dart_json_mapper.dart';
 
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
+@jsonSerializable
 class Compiler {
   final String id;
   final String name;
@@ -15,41 +17,32 @@ class Compiler {
   Compiler(this.id, this.name, this.lang, this.compilerType, this.semver,
       this.instructionSet);
 
-  factory Compiler.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'id': String id,
-        'name': String name,
-        'lang': String lang,
-        'compilerType': String compileType,
-        'semver': String semver,
-        'instructionSet': String instructionSet,
-      } =>
-        Compiler(id, name, lang, compileType, semver, instructionSet),
-      _ => throw FormatException(
-          'Could not construct a Compiler object from JSON $json'),
-    };
-  }
-
   static Future<List<Compiler>> fetchCompilers() async {
-    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
+    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint"),
+        headers: <String, String>{
+          HttpHeaders.acceptHeader: "application/json"
+        });
 
     if (response.statusCode == HttpStatus.ok) {
-      Iterable it = jsonDecode(response.body);
-      return List<Compiler>.from(it.map((e) => Compiler.fromJson(e)));
+      return JsonMapper.deserialize<List<Compiler>>(response.body) as List<Compiler>;
     } else {
       throw Exception('Failed to fetch compilers: ${response.statusCode}');
     }
   }
 
-  static Future<List<Compiler>> fetchCompilersForLanguage(String langName) async {
-    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint/$langName"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });
+  static Future<List<Compiler>> fetchCompilersForLanguage(
+      String langName) async {
+    final response = await http.get(
+        Uri.parse("$defaultUrl$compilersEndpoint/$langName"),
+        headers: <String, String>{
+          HttpHeaders.acceptHeader: "application/json"
+        });
 
     if (response.statusCode == HttpStatus.ok) {
-      Iterable it = jsonDecode(response.body);
-      return List<Compiler>.from(it.map((e) => Compiler.fromJson(e)));
+      return JsonMapper.deserialize<List<Compiler>>(response.body) as List<Compiler>;
     } else {
-      throw Exception('Failed to fetch compilers for $langName: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch compilers for $langName: ${response.statusCode}');
     }
   }
 }

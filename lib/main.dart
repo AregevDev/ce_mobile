@@ -1,8 +1,11 @@
+import 'package:ce_mobile/model/language.dart';
 import 'package:flutter/material.dart';
 
-import 'model/compiler.dart';
+import 'main.mapper.g.dart' show initializeJsonMapper;
 
 void main() {
+  initializeJsonMapper();
+
   runApp(const MyApp());
 }
 
@@ -60,12 +63,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  late Future<List<Compiler>> compilers;
+  late Future<List<Language>> compilers;
 
   @override
   void initState() {
     super.initState();
-    compilers = Compiler.fetchCompilersForLanguage("llvm");
+    compilers = Language.fetchLanguages();
   }
 
   void _incrementCounter() {
