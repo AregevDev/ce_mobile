@@ -12,7 +12,7 @@ class Language {
   final List<String> extensions;
   final String monaco;
 
-  Language(this.id, this.name, this.extensions, this.monaco);
+  const Language(this.id, this.name, this.extensions, this.monaco);
 
   static Future<List<Language>> fetchLanguages() async {
     final response = await http.get(Uri.parse("$defaultUrl$languagesEndpoint"), headers: <String, String>{ HttpHeaders.acceptHeader: "application/json" });

@@ -14,13 +14,13 @@ class Compiler {
   final String semver;
   final String instructionSet;
 
-  Compiler(this.id, this.name, this.lang, this.compilerType, this.semver,
+  const Compiler(this.id, this.name, this.lang, this.compilerType, this.semver,
       this.instructionSet);
 
   static Future<List<Compiler>> fetchCompilers() async {
-    final response = await http.get(Uri.parse("$defaultUrl$compilersEndpoint"),
+    final response = await http.get(Uri.parse('$defaultUrl$compilersEndpoint'),
         headers: <String, String>{
-          HttpHeaders.acceptHeader: "application/json"
+          HttpHeaders.acceptHeader: 'application/json'
         });
 
     if (response.statusCode == HttpStatus.ok) {
@@ -33,9 +33,9 @@ class Compiler {
   static Future<List<Compiler>> fetchCompilersForLanguage(
       String langName) async {
     final response = await http.get(
-        Uri.parse("$defaultUrl$compilersEndpoint/$langName"),
+        Uri.parse('$defaultUrl$compilersEndpoint/$langName'),
         headers: <String, String>{
-          HttpHeaders.acceptHeader: "application/json"
+          HttpHeaders.acceptHeader: 'application/json'
         });
 
     if (response.statusCode == HttpStatus.ok) {
