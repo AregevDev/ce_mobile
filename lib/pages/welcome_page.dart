@@ -1,10 +1,25 @@
+import 'package:ce_mobile/isar_service.dart';
 import 'package:ce_mobile/model/workspace.dart';
 import 'package:ce_mobile/pages/editor_page.dart';
 import 'package:ce_mobile/widgets/create_dialog.dart';
 import 'package:flutter/material.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  final IsarService isarService = IsarService();
+  late Future<List<Workspace>> _recentProjectsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _recentProjectsFuture = isarService.getRecentProjects();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +54,11 @@ class WelcomePage extends StatelessWidget {
                         onPressed: () => showDialog(
                             context: context,
                             builder: (BuildContext context) =>
-                                const CreateDialog()),
+                                    const CreateDialog())
+                            .then((value) => setState(() {
+                                  _recentProjectsFuture =
+                                      isarService.getRecentProjects();
+                                })),
                         label: const Text('Create a New Workspace')),
                   ),
                   Container(
@@ -61,54 +80,29 @@ class WelcomePage extends StatelessWidget {
                     'Recent Projects',
                   )),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(8),
-                  children: <Widget>[
-                    ListTile(
-                      tileColor: Colors.lightGreen[600],
-                      title:
-                          const Text('Recent #1', textAlign: TextAlign.center),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      tileColor: Colors.lightGreen[500],
-                      title:
-                          const Text('Recent #2', textAlign: TextAlign.center),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      tileColor: Colors.lightGreen[200],
-                      title: Text('Recent #3',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary)
-                                  .color!)),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      tileColor: Colors.lightGreen[100],
-                      title: Text('Recent #4',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary)
-                                  .color!)),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
+                  child: FutureBuilder<List<Workspace>>(
+                future: _recentProjectsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No Projects Found'));
+                    }
+
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(snapshot.data![index].name),
+                            subtitle: Text(
+                                'Last Modified: ${snapshot.data![index].lastModified}'),
+                            onTap: () {},
+                          );
+                        });
+                  }
+
+                  return const Center(child: CircularProgressIndicator());
+                },
+              )),
             ],
           ),
         ),
