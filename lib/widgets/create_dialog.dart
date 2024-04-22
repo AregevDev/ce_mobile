@@ -76,17 +76,20 @@ class _CreateDialogState extends State<CreateDialog> {
             child: const Text('Cancel')),
         TextButton(
             onPressed: () {
-              Workspace w = Workspace(_controller.text);
-              Future.wait([service.saveWorkspace(w)]);
+              Workspace w = Workspace(_controller.text, saveOnDisk: _saveOnDisk);
+              if (w.saveOnDisk) {
+                Future.wait([service.saveWorkspace(w)]);
+              }
 
               Navigator.pop(context);
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditorPage(workspace: w),
+                    builder: (context) =>
+                        EditorPage(workspace: w),
                   ));
             },
-            child: const Text('Create'))
+            child: const Text('Create')),
       ],
     );
   }

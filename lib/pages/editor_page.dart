@@ -19,7 +19,9 @@ class _EditorPageState extends State<EditorPage> {
     return PopScope(
       onPopInvoked: (didPop) {
         widget.workspace.lastModified = DateTime.now();
-        _service.saveWorkspace(widget.workspace);
+        if (widget.workspace.saveOnDisk) {
+          _service.saveWorkspace(widget.workspace);
+        }
       },
       child: Scaffold(
         appBar: AppBar(

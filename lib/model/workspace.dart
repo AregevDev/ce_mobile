@@ -85,5 +85,8 @@ class Workspace {
 
   DateTime lastModified = DateTime.now();
 
-  Workspace(this.name);
+  @ignore
+  bool saveOnDisk;
+
+  Workspace(this.name, {this.saveOnDisk = true});
 }
