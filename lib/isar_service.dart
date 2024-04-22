@@ -14,9 +14,9 @@ class IsarService {
     isar.writeTxnSync(() => isar.workspaces.putSync(workspace));
   }
 
-  Future<List<Workspace>> getRecentProjects() async {
+  Stream<List<Workspace>> streamRecentWorkspaces() async* {
     final isar = await db;
-    return await isar.workspaces.where().sortByLastModifiedDesc().findAll();
+    yield* isar.workspaces.where().sortByLastModifiedDesc().watch(fireImmediately: true);
   }
 
   Future<Isar> openDB() async {

@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:ce_mobile/isar_service.dart';
 import 'package:ce_mobile/model/workspace.dart';
 import 'package:ce_mobile/pages/editor_page.dart';
 import 'package:ce_mobile/widgets/create_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -13,13 +16,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   final IsarService isarService = IsarService();
-  late Future<List<Workspace>> _recentProjectsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _recentProjectsFuture = isarService.getRecentProjects();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +50,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () => showDialog(
                             context: context,
                             builder: (BuildContext context) =>
-                                    const CreateDialog())
-                            .then((value) => setState(() {
-                                  _recentProjectsFuture =
-                                      isarService.getRecentProjects();
-                                })),
+                                const CreateDialog()),
                         label: const Text('Create a New Workspace')),
                   ),
                   Container(
@@ -78,31 +70,43 @@ class _WelcomePageState extends State<WelcomePage> {
                   alignment: Alignment.centerLeft,
                   child: const Text(
                     'Recent Projects',
+                    style: TextStyle(decoration: TextDecoration.underline),
                   )),
-              Expanded(
-                  child: FutureBuilder<List<Workspace>>(
-                future: _recentProjectsFuture,
+              StreamBuilder(
+                stream: isarService.streamRecentWorkspaces(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No Projects Found'));
+                    final workspaces = snapshot.data;
+                    if (workspaces != null) {
+                      return Expanded(
+                        child: ListView.builder(
+                            itemCount: workspaces.length,
+                            itemBuilder: (context, index) {
+                              final workspace = workspaces[index];
+                              return ListTile(
+                                title: Text(workspace.name),
+                                subtitle: Text(
+                                    'Last modified: ${DateFormat('dd-MM-yyyy - kk:mm').format(workspace.lastModified)}'),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditorPage(
+                                              workspace: workspace)));
+                                },
+                              );
+                            }),
+                      );
                     }
-
-                    return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(snapshot.data![index].name),
-                            subtitle: Text(
-                                'Last Modified: ${snapshot.data![index].lastModified}'),
-                            onTap: () {},
-                          );
-                        });
+                  } else if (snapshot.hasError) {
+                    log('Error: ${snapshot.error.toString()}');
                   }
 
-                  return const Center(child: CircularProgressIndicator());
+                  return const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
                 },
-              )),
+              ),
             ],
           ),
         ),
