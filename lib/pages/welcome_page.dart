@@ -69,7 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   margin: const EdgeInsets.all(8),
                   alignment: Alignment.centerLeft,
                   child: const Text(
-                    'Recent Projects',
+                    'Recent Workspaces',
                     style: TextStyle(decoration: TextDecoration.underline),
                   )),
               StreamBuilder(
