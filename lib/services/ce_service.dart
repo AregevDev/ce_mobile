@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:ce_mobile/consts.dart';
+import 'package:ce_mobile/model/compiler.dart';
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 
-import '../consts.dart';
-import '../model/workspace.dart';
 import 'package:http/http.dart' as http;
 
 @jsonSerializable

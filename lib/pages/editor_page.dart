@@ -55,7 +55,6 @@ class _EditorPageState extends State<EditorPage> {
     return PopScope(
       onPopInvoked: (didPop) {
         widget.workspace.lastModified = DateTime.now();
-        log(widget.workspace.currentCompiler.name);
         if (widget.workspace.saveOnDisk) {
           Future.wait([_service.saveWorkspace(widget.workspace)]);
         }

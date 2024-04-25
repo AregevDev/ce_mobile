@@ -1,4 +1,5 @@
-import 'package:ce_mobile/model/workspace.dart';
+import 'package:ce_mobile/model/compiler.dart';
+import 'package:ce_mobile/model/language.dart';
 
 // Default URL
 const String defaultUrl = 'https://godbolt.org';
