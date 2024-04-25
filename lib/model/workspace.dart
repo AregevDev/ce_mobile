@@ -1,15 +1,11 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:ce_mobile/consts.dart';
 import 'package:dart_json_mapper/dart_json_mapper.dart';
-import 'package:isar/isar.dart';
-
-part 'workspace.g.dart';
+import 'package:uuid/uuid.dart';
 
 @jsonSerializable
-@embedded
 class Compiler {
   final String id;
   final String name;
@@ -18,10 +14,8 @@ class Compiler {
   final String semver;
   final String instructionSet;
 
-  const Compiler.create(this.id, this.name, this.lang, this.compilerType, this.semver,
+  const Compiler(this.id, this.name, this.lang, this.compilerType, this.semver,
       this.instructionSet);
-
-  Compiler() : id = '', name = '', lang = '', compilerType = '', semver = '', instructionSet = '';
 
   static Future<List<Compiler>> fetchCompilers() async {
     final response = await http.get(Uri.parse('$defaultUrl$compilersEndpoint'),
@@ -54,16 +48,13 @@ class Compiler {
 }
 
 @jsonSerializable
-@embedded
 class Language {
   final String id;
   final String name;
   final List<String> extensions;
   final String monaco;
 
-  Language() : id = '', name = '', extensions = List.empty(), monaco = '';
-
-  const Language.create(this.id, this.name, this.extensions, this.monaco);
+  const Language(this.id, this.name, this.extensions, this.monaco);
 
   static Future<List<Language>> fetchLanguages() async {
     final response = await http.get(Uri.parse('$defaultUrl$languagesEndpoint'), headers: <String, String>{ HttpHeaders.acceptHeader: 'application/json' });
@@ -76,21 +67,17 @@ class Language {
   }
 }
 
-@embedded
+@jsonSerializable
 class WorkspaceFile {
   String filename;
   String code;
 
-  WorkspaceFile() : filename = '', code = '' {
-    log('WorkspaceFile empty constructor was called from:\n${StackTrace.current}');
-  }
-
-  WorkspaceFile.create(this.filename, this.code);
+  WorkspaceFile(this.filename, this.code);
 }
 
-@collection
+@jsonSerializable
 class Workspace {
-  Id id = Isar.autoIncrement;
+  String uuid;
 
   String name;
   Compiler currentCompiler;
@@ -100,10 +87,10 @@ class Workspace {
 
   late List<WorkspaceFile> files;
 
-  @ignore
+  @JsonProperty(ignore: true)
   bool saveOnDisk;
 
-  Workspace(this.name, {this.saveOnDisk = true}) : currentCompiler = defaultCompiler, currentLanguage = defaultLanguage {
-    files = List.of([WorkspaceFile.create('main${currentLanguage.extensions.first}', '')]);
+  Workspace(this.name, {this.saveOnDisk = true}) : currentCompiler = defaultCompiler, currentLanguage = defaultLanguage, uuid = const Uuid().v4() {
+    files = List.of([WorkspaceFile('main${currentLanguage.extensions.first}', '')]);
   }
 }
