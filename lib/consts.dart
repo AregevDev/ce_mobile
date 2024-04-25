@@ -6,6 +6,7 @@ const String defaultUrl = 'https://godbolt.org';
 // Endpoints
 const String compilersEndpoint = '/api/compilers';
 const String languagesEndpoint = '/api/languages';
+const String compileEndpoint = '/api/compiler';
 
 // Default
 const Compiler defaultCompiler =

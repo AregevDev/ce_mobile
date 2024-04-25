@@ -1,7 +1,5 @@
-
-import 'package:ce_mobile/isar_service.dart';
+import 'package:ce_mobile/services/isar_service.dart';
 import 'package:ce_mobile/model/workspace.dart';
-import 'package:ce_mobile/pages/editor_page.dart';
 import 'package:flutter/material.dart';
 
 class CreateDialog extends StatefulWidget {
@@ -76,18 +74,19 @@ class _CreateDialogState extends State<CreateDialog> {
             child: const Text('Cancel')),
         TextButton(
             onPressed: () {
-              Workspace w = Workspace(_controller.text, saveOnDisk: _saveOnDisk);
+              Workspace w = Workspace( _controller.text, saveOnDisk: _saveOnDisk);
+
               if (w.saveOnDisk) {
                 Future.wait([service.saveWorkspace(w)]);
               }
 
               Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        EditorPage(workspace: w),
-                  ));
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) =>
+              //           EditorPage(workspace: w),
+              //     ));
             },
             child: const Text('Create')),
       ],

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -75,18 +76,34 @@ class Language {
   }
 }
 
+@embedded
+class WorkspaceFile {
+  String filename;
+  String code;
+
+  WorkspaceFile() : filename = '', code = '' {
+    log('WorkspaceFile empty constructor was called from:\n${StackTrace.current}');
+  }
+
+  WorkspaceFile.create(this.filename, this.code);
+}
+
 @collection
 class Workspace {
   Id id = Isar.autoIncrement;
 
   String name;
-  Compiler currentCompiler = defaultCompiler;
-  Language currentLanguage = defaultLanguage;
+  Compiler currentCompiler;
+  Language currentLanguage;
 
   DateTime lastModified = DateTime.now();
+
+  late List<WorkspaceFile> files;
 
   @ignore
   bool saveOnDisk;
 
-  Workspace(this.name, {this.saveOnDisk = true});
+  Workspace(this.name, {this.saveOnDisk = true}) : currentCompiler = defaultCompiler, currentLanguage = defaultLanguage {
+    files = List.of([WorkspaceFile.create('main${currentLanguage.extensions.first}', '')]);
+  }
 }

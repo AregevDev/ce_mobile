@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:ce_mobile/isar_service.dart';
+import 'package:ce_mobile/services/isar_service.dart';
 import 'package:ce_mobile/model/workspace.dart';
 import 'package:ce_mobile/pages/editor_page.dart';
 import 'package:ce_mobile/widgets/create_dialog.dart';
@@ -83,10 +83,11 @@ class _WelcomePageState extends State<WelcomePage> {
                             itemCount: workspaces.length,
                             itemBuilder: (context, index) {
                               final workspace = workspaces[index];
+
                               return ListTile(
-                                title: Text(workspace.name),
+                                title: Text('${workspace.name} - ${workspace.currentCompiler.name} - ${workspace.files.first.filename}'),
                                 subtitle: Text(
-                                    'Last modified: ${DateFormat('dd-MM-yyyy - kk:mm').format(workspace.lastModified)}'),
+                                    'Last modified: ${DateFormat('dd-MM-yyyy kk:mm').format(workspace.lastModified)}'),
                                 onTap: () {
                                   Navigator.push(
                                       context,
