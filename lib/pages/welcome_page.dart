@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:ce_mobile/services/isar_service.dart';
 import 'package:ce_mobile/model/workspace.dart';
 import 'package:ce_mobile/pages/editor_page.dart';
+import 'package:ce_mobile/services/sembast_service.dart';
 import 'package:ce_mobile/widgets/create_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +15,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  final IsarService isarService = IsarService();
+  final SembastService _service = SembastService();
 
   @override
   Widget build(BuildContext context) {
@@ -73,31 +73,49 @@ class _WelcomePageState extends State<WelcomePage> {
                     style: TextStyle(decoration: TextDecoration.underline),
                   )),
               StreamBuilder(
-                stream: isarService.streamRecentWorkspaces(),
+                stream: _service.streamRecentWorkspaces(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final workspaces = snapshot.data;
                     if (workspaces != null) {
-                      return Expanded(
-                        child: ListView.builder(
-                            itemCount: workspaces.length,
-                            itemBuilder: (context, index) {
-                              final workspace = workspaces[index];
+                      if (workspaces.isNotEmpty) {
+                        return Expanded(
+                          child: ListView.builder(
+                              itemCount: workspaces.length,
+                              itemBuilder: (context, index) {
+                                final workspace = workspaces[index];
 
-                              return ListTile(
-                                title: Text('${workspace.name} - ${workspace.currentCompiler.name} - ${workspace.files.first.filename}'),
-                                subtitle: Text(
-                                    'Last modified: ${DateFormat('dd-MM-yyyy kk:mm').format(workspace.lastModified)}'),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditorPage(
-                                              workspace: workspace)));
-                                },
-                              );
-                            }),
-                      );
+                                return ListTile(
+                                  title: Text(
+                                      '${workspace.name} - ${workspace.currentCompiler.name} - ${workspace.uuid}'),
+                                  subtitle: Text(
+                                      'Last modified: ${DateFormat('dd-MM-yyyy kk:mm').format(workspace.lastModified)}'),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditorPage(
+                                                workspace: workspace)));
+                                  },
+                                );
+                              }),
+                        );
+                      } else {
+                        return  Expanded(
+                            child: Center(
+                                child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).colorScheme.error)),
+                          child: Text(
+                            'You have no projects.',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                        )));
+                      }
                     }
                   } else if (snapshot.hasError) {
                     log('Error: ${snapshot.error.toString()}');

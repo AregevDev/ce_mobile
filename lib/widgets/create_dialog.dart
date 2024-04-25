@@ -1,6 +1,9 @@
-import 'package:ce_mobile/services/isar_service.dart';
+
 import 'package:ce_mobile/model/workspace.dart';
+import 'package:ce_mobile/services/sembast_service.dart';
 import 'package:flutter/material.dart';
+
+import '../pages/editor_page.dart';
 
 class CreateDialog extends StatefulWidget {
   const CreateDialog({super.key});
@@ -12,7 +15,7 @@ class CreateDialog extends StatefulWidget {
 class _CreateDialogState extends State<CreateDialog> {
   late TextEditingController _controller;
   bool _saveOnDisk = true;
-  final IsarService service = IsarService();
+  final SembastService _service = SembastService();
 
   @override
   void initState() {
@@ -77,16 +80,16 @@ class _CreateDialogState extends State<CreateDialog> {
               Workspace w = Workspace( _controller.text, saveOnDisk: _saveOnDisk);
 
               if (w.saveOnDisk) {
-                Future.wait([service.saveWorkspace(w)]);
+                Future.wait([_service.saveWorkspace(w)]);
               }
 
               Navigator.pop(context);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) =>
-              //           EditorPage(workspace: w),
-              //     ));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditorPage(workspace: w),
+                  ));
             },
             child: const Text('Create')),
       ],

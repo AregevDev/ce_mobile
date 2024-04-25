@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:ce_mobile/consts.dart';
+import 'package:ce_mobile/model/compiler.dart';
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 
-import '../consts.dart';
-import '../model/workspace.dart';
 import 'package:http/http.dart' as http;
 
 @jsonSerializable
@@ -78,7 +78,7 @@ class CEService {
     final json = JsonMapper.serialize(request);
 
     final response = await http.post(
-        Uri.parse('$defaultUrl$compileEndpoint/g132/compile'),
+        Uri.parse('$defaultUrl$compileEndpoint/${cc.id}/compile'),
         body: json,
         headers: <String, String>{
           HttpHeaders.contentTypeHeader: 'application/json',
